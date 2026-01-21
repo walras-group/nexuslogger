@@ -6,12 +6,31 @@ build-backend = "maturin"
 name = "nexuslog"
 version = "0.1.0"
 description = "Fast async logger with Python bindings"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "river-walras" }]
 requires-python = ">=3.8"
+keywords = ["logging", "async", "fast", "rust"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
+
+[project.urls]
+Homepage = "https://github.com/river-walras/nexuslogger"
+Repository = "https://github.com/river-walras/nexuslogger"
+Issues = "https://github.com/river-walras/nexuslogger/issues"
 
 [tool.maturin]
 features = ["python"]

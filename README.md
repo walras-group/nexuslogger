@@ -2,6 +2,8 @@
 
 一个用 Rust 实现的超高速异步日志库，提供 Python 绑定。比标准 Python 日志快 **33 倍**，比 picologging 快 **12 倍**。
 
+> **Note**: 支持 Python 3.8 - 3.14。基准测试中的 picologging 目前仅支持到 Python 3.12。
+
 ## 性能基准
 
 使用 1,000,000 条日志消息的基准测试结果：
@@ -385,7 +387,7 @@ loop {
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/nexuslog.git
+git clone https://github.com/river-walras/nexuslogger.git
 cd nexuslog
 
 # 构建 Python wheel
@@ -399,9 +401,6 @@ maturin build --release
 ### 运行性能测试
 
 ```bash
-# Rust 基准测试
-cargo bench
-
 # Python 基准测试
 python benches/bench_python.py
 ```
@@ -419,8 +418,8 @@ nexuslog/
 │       ├── __init__.py     # Python 包入口
 │       └── _logger.pyi     # 类型提示
 ├── benches/
-│   ├── performance.rs      # Rust 基准测试
-│   └── bench_python.py     # Python 基准测试
+│   ├── bench_python.py     # Python 基准测试
+│   └── example.py          # 使用示例
 ├── Cargo.toml              # Rust 依赖
 ├── pyproject.toml          # Python 项目配置
 └── README.md               # 本文件

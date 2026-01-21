@@ -2,6 +2,12 @@
 name = "nexuslog"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Fast async logger with Python bindings"
+repository = "https://github.com/river-walras/nexuslogger"
+readme = "README.md"
+keywords = ["logging", "async", "fast"]
+categories = ["development-tools::debugging"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
