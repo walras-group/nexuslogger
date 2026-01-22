@@ -35,6 +35,7 @@ __all__ = [
     "info",
     "warning",
     "error",
+    "shutdown",
 ]
 
 _DEFAULT_LEVEL = INFO
@@ -138,3 +139,8 @@ def warning(message: str) -> None:
 def error(message: str) -> None:
     """Log an error message to the root logger."""
     _get_root_logger().error(message)
+
+
+def shutdown() -> None:
+    """Shutdown the root logger and flush remaining messages."""
+    _get_root_logger().shutdown()

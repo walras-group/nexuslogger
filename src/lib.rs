@@ -202,9 +202,24 @@ fn rotate<P: ToString + Send>(
     let capacity = 1024 * 1024;
     match &ctx.path {
         Some(path) => {
-            let postfix = ctx.date.format("_%Y%m%d.log").to_string();
-
-            let path = path.to_string() + &postfix;
+            let path = {
+                let postfix = ctx.date.format("_%Y%m%d").to_string();
+                let path_str = path.to_string();
+                let input = std::path::Path::new(&path_str);
+                let stem = input.file_stem().and_then(|s| s.to_str());
+                let ext = input.extension().and_then(|s| s.to_str());
+                if let (Some(stem), Some(ext)) = (stem, ext) {
+                    let filename = format!("{stem}{postfix}.{ext}");
+                    match input.parent() {
+                        Some(parent) if !parent.as_os_str().is_empty() => {
+                            parent.join(filename).to_string_lossy().to_string()
+                        }
+                        _ => filename,
+                    }
+                } else {
+                    format!("{}{}.log", path_str, postfix)
+                }
+            };
             let file = open_file(&path)?;
             Ok(BufWriter::with_capacity(capacity, Box::new(file)))
         }

@@ -1,7 +1,7 @@
 import nexuslog as logging
 import time
 
-logging.basicConfig(level=logging.INFO, unix_ts=True)
+logging.basicConfig(level=logging.DEBUG, unix_ts=True, filename='tmp/app.log')
 
 class A:
     log = logging.getLogger()
@@ -15,9 +15,9 @@ def main():
 
     for i in range(1000):
         a.log.info(f"Message {i} from A")
+        b.log.debug(f"Message {i} from B")
 
-    a.log.shutdown()
-    b.log.shutdown()
+    logging.shutdown()
 
 if __name__ == "__main__":
     main()
