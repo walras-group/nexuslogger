@@ -26,7 +26,7 @@ thread_local! {
 #[derive(Debug, Clone, Copy)]
 struct Timestamp {
     secs: u64,
-    micros: u32,
+    nanos: u32,
 }
 
 #[derive(Debug)]
@@ -75,7 +75,7 @@ impl LogMessage {
 struct ThreadTimestampCache {
     base_instant: Instant,
     base_secs: u64,
-    base_micros: u32,
+    base_nanos: u32,
 }
 
 impl ThreadTimestampCache {
@@ -84,7 +84,7 @@ impl ThreadTimestampCache {
         Self {
             base_instant: Instant::now(),
             base_secs: ts.secs,
-            base_micros: ts.micros,
+            base_nanos: ts.nanos,
         }
     }
 
@@ -92,7 +92,7 @@ impl ThreadTimestampCache {
         let ts = now_timestamp();
         self.base_instant = Instant::now();
         self.base_secs = ts.secs;
-        self.base_micros = ts.micros;
+        self.base_nanos = ts.nanos;
         ts
     }
 
@@ -102,11 +102,11 @@ impl ThreadTimestampCache {
             return self.refresh();
         }
 
-        let elapsed_micros = elapsed.as_micros() as u64;
-        let total_micros = self.base_micros as u64 + elapsed_micros;
+        let elapsed_nanos = elapsed.as_nanos() as u64;
+        let total_nanos = self.base_nanos as u64 + elapsed_nanos;
         Timestamp {
-            secs: self.base_secs + (total_micros / 1_000_000),
-            micros: (total_micros % 1_000_000) as u32,
+            secs: self.base_secs + (total_nanos / 1_000_000_000),
+            nanos: (total_nanos % 1_000_000_000) as u32,
         }
     }
 }
@@ -237,7 +237,7 @@ fn now_timestamp() -> Timestamp {
         .unwrap_or_else(|err| err.duration());
     Timestamp {
         secs: since_epoch.as_secs(),
-        micros: since_epoch.subsec_micros(),
+        nanos: since_epoch.subsec_nanos(),
     }
 }
 
@@ -259,6 +259,7 @@ struct TimestampCache {
     date: chrono::NaiveDate,
     time_prefix: String,
     offset_prefix: String,
+    unix_prefix: String,
 }
 
 impl TimestampCache {
@@ -277,6 +278,7 @@ impl TimestampCache {
             date: chrono::NaiveDate::from_ymd_opt(1970, 1, 1).unwrap(),
             time_prefix: String::new(),
             offset_prefix: String::new(),
+            unix_prefix: String::new(),
         }
     }
 
@@ -307,6 +309,7 @@ impl TimestampCache {
         );
         self.offset_prefix =
             format!("{}{:02}:{:02} level=", self.offset_sign, self.offset_h, self.offset_m);
+        self.unix_prefix = format!("time={}.", secs);
     }
 }
 
@@ -366,10 +369,11 @@ fn write_entry<P: ToString + Send>(
     };
 
     if ctx.unix_ts {
-        write!(target, "time={}.{:06} level={}", ts.secs, ts.micros, level)?;
+        target.write_all(cache.unix_prefix.as_bytes())?;
+        write!(target, "{:09} level={}", ts.nanos, level)?;
     } else {
         target.write_all(cache.time_prefix.as_bytes())?;
-        write!(target, "{:06}", ts.micros)?;
+        write!(target, "{:06}", ts.nanos / 1_000)?;
         target.write_all(cache.offset_prefix.as_bytes())?;
         target.write_all(level.as_bytes())?;
     }

@@ -28,3 +28,4 @@ ENV/
 # Environment
 .env
 .env.*
+tutorial/

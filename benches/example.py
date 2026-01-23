@@ -1,7 +1,7 @@
 import nexuslog as logging
 import time
 
-logging.basicConfig(level=logging.DEBUG, unix_ts=True, filename='tmp/app.log')
+logging.basicConfig(level=logging.DEBUG, unix_ts=False, filename='tmp/app.log')
 
 class A:
     log = logging.getLogger()
